@@ -1,12 +1,14 @@
-# Drogon template
+# PBin-cpp
 
-This is a template for a Drogon C++ web application. It includes a basic structure for building a RESTful API with database integration, JWT authentication, and more.
+This is a simple code snippet sharing web application, similar to pastebin, made with Drogon C++ Framework.
+It's completely anonymous, though I'm planning on bringing here some convenient authentication.
 
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
 - [Cloning the Repository](#cloning-the-repository)
 - [Building the Project](#building-the-project)
+- [Database Setup](#database-setup)
 - [Configuration](#configuration)
 - [Running the Application](#running-the-application)
 
@@ -28,8 +30,8 @@ Before you begin, ensure you have the following installed:
 2. Run the following command:
 
     ```bash
-    git clone --recursive --depth=1 --shallow-submodules https://github.com/1Kuso4ek1/drogon-template.git
-    cd drogon-template
+    git clone --recursive --depth=1 --shallow-submodules https://github.com/1Kuso4ek1/PBin-cpp.git
+    cd PBin-cpp
     ```
 
     **Note:** The `--depth=1 --shallow-submodules` flags are used for faster cloning. If you need to work with the Drogon submodule directly (e.g., switch branches), you might need to clone without these flags.
@@ -54,6 +56,32 @@ Before you begin, ensure you have the following installed:
     ```bash
     make -j$(nproc)
     ```
+
+## Database Setup
+
+1. **Create a Database:**
+   - Connect to your PostgreSQL server using `psql` or a GUI tool like pgAdmin.
+   - Create a new user and database.
+   - For example:
+       ```sql
+       CREATE USER your_db_user WITH PASSWORD 'your_db_password';
+       CREATE DATABASE pbin WITH OWNER your_db_user;
+       GRANT ALL PRIVILEGES ON DATABASE pbin TO your_db_user;
+       ```
+      - Replace `your_db_user`, `your_db_password`, and `pbin` with your desired username, password, and database name.
+
+2. **Create tables:**
+   - You need to create tables in a database.
+   - In the `sql` folder you can find `create_tables.sql` file, which contains all the necessary queries.
+   - Connect to your database using `psql` or pgAdmin:
+       ```bash
+       psql -U your_db_user -d pbin
+       ```
+   - Run the `create_tables.sql` file:
+       ```sql
+       \i /path/to/this/project/sql/create_tables.sql
+       ```
+      - Replace `/path/to/this/project/sql/create_tables.sql` with the actual path to the file.
 
 ## Configuration
 
