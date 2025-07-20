@@ -20,6 +20,8 @@ set(
     include/Utils/TemplateRenderer.hpp
 
     include/Models/Pastes.hpp
+
+    include/Services/ExpiredPastesCleaner.hpp
 )
 
 set(
@@ -29,6 +31,8 @@ set(
     src/Controllers/PasteController.cpp
 
     src/Models/Pastes.cpp
+
+    src/Services/ExpiredPastesCleaner.cpp
 
     src/main.cpp
 )

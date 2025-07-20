@@ -1,5 +1,7 @@
 #include <drogon/drogon.h>
 
+#include "Services/ExpiredPastesCleaner.hpp"
+
 using namespace drogon;
 
 int main(const int argc, char* argv[])
@@ -15,6 +17,9 @@ int main(const int argc, char* argv[])
             [](const HttpRequestPtr &req, const HttpResponsePtr &resp) {
                 resp->addHeader("Access-Control-Allow-Origin", "*");
             }
-        )
-        .run();
+        );
+
+    Services::ExpiredPastesCleaner::run();
+
+    app().run();
 }

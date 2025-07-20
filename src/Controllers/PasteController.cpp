@@ -4,6 +4,8 @@
 
 #include "Utils/TemplateRenderer.hpp"
 
+#include "Services/ExpiredPastesCleaner.hpp"
+
 namespace Models = drogon_model::pbin;
 
 namespace Controllers
@@ -13,8 +15,7 @@ void PasteController::paste(const HttpRequestPtr& req, Callback&& callback)
 {
     auto& json = *req->getJsonObject();
 
-    static auto dbClient = app().getDbClient();
-    static auto mapper = orm::Mapper<Models::Pastes>(dbClient);
+    static auto mapper = orm::Mapper<Models::Pastes>(app().getDbClient());
 
     const auto id = utils::base64Encode(utils::getUuid()).substr(0, 8);
     const auto url = std::format("http://{}/paste/{}", req->getHeader("host"), id);
@@ -48,8 +49,9 @@ void PasteController::paste(const HttpRequestPtr& req, Callback&& callback)
 
 void PasteController::getPaste(const HttpRequestPtr& req, Callback&& callback, const std::string& id)
 {
-    static auto dbClient = app().getDbClient();
-    static auto mapper = orm::Mapper<Models::Pastes>(dbClient);
+    Services::ExpiredPastesCleaner::cleanup();
+
+    static auto mapper = orm::Mapper<Models::Pastes>(app().getDbClient());
 
     std::string res;
 
@@ -78,8 +80,9 @@ void PasteController::getPaste(const HttpRequestPtr& req, Callback&& callback, c
 
 void PasteController::getRawPaste(const HttpRequestPtr& req, Callback&& callback, const std::string& id)
 {
-    static auto dbClient = app().getDbClient();
-    static auto mapper = orm::Mapper<Models::Pastes>(dbClient);
+    Services::ExpiredPastesCleaner::cleanup();
+
+    static auto mapper = orm::Mapper<Models::Pastes>(app().getDbClient());
 
     std::string res;
 
@@ -104,8 +107,9 @@ void PasteController::getRawPaste(const HttpRequestPtr& req, Callback&& callback
 
 void PasteController::getJsonPaste(const HttpRequestPtr& req, Callback&& callback, const std::string& id)
 {
-    static auto dbClient = app().getDbClient();
-    static auto mapper = orm::Mapper<Models::Pastes>(dbClient);
+    Services::ExpiredPastesCleaner::cleanup();
+
+    static auto mapper = orm::Mapper<Models::Pastes>(app().getDbClient());
 
     Json::Value res;
 
@@ -115,11 +119,12 @@ void PasteController::getJsonPaste(const HttpRequestPtr& req, Callback&& callbac
     {
         const auto paste = mapper.findOne({ "id", id });
         res = paste.toJson();
+        res.removeMember("deletetoken");
     }
     catch(...)
     {
         code = k404NotFound;
-        res = std::format("Error opening paste {}", id);
+        res["error"] = std::format("Error opening paste {}", id);
     }
 
     const auto response = HttpResponse::newHttpJsonResponse(res);
@@ -140,8 +145,7 @@ void PasteController::deletePaste(const HttpRequestPtr& req, Callback&& callback
         return;
     }
 
-    static auto dbClient = app().getDbClient();
-    static auto mapper = orm::Mapper<Models::Pastes>(dbClient);
+    static auto mapper = orm::Mapper<Models::Pastes>(app().getDbClient());
 
     const auto token = req->headers().at("x-delete-token");
 
