@@ -51,6 +51,7 @@ class Pastes
         static const std::string _expires;
         static const std::string _viewcount;
         static const std::string _ipaddress;
+        static const std::string _deletetoken;
     };
 
     static const int primaryKeyNumber;
@@ -165,8 +166,18 @@ class Pastes
     void setIpaddress(std::string &&pIpaddress) noexcept;
     void setIpaddressToNull() noexcept;
 
+    /**  For column deletetoken  */
+    ///Get the value of the column deletetoken, returns the default value if the column is null
+    const std::string &getValueOfDeletetoken() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<std::string> &getDeletetoken() const noexcept;
+    ///Set the value of the column deletetoken
+    void setDeletetoken(const std::string &pDeletetoken) noexcept;
+    void setDeletetoken(std::string &&pDeletetoken) noexcept;
+    void setDeletetokenToNull() noexcept;
 
-    static size_t getColumnNumber() noexcept {  return 7;  }
+
+    static size_t getColumnNumber() noexcept {  return 8;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
     Json::Value toJson() const;
@@ -194,6 +205,7 @@ class Pastes
     std::shared_ptr<::trantor::Date> expires_;
     std::shared_ptr<int32_t> viewcount_;
     std::shared_ptr<std::string> ipaddress_;
+    std::shared_ptr<std::string> deletetoken_;
     struct MetaData
     {
         const std::string colName_;
@@ -205,7 +217,7 @@ class Pastes
         const bool notNull_;
     };
     static const std::vector<MetaData> metaData_;
-    bool dirtyFlag_[7]={ false };
+    bool dirtyFlag_[8]={ false };
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
@@ -259,6 +271,11 @@ class Pastes
         if(dirtyFlag_[6])
         {
             sql += "ipaddress,";
+            ++parametersCount;
+        }
+        if(dirtyFlag_[7])
+        {
+            sql += "deletetoken,";
             ++parametersCount;
         }
         if(parametersCount > 0)
@@ -315,6 +332,11 @@ class Pastes
             sql +="default,";
         }
         if(dirtyFlag_[6])
+        {
+            n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
+            sql.append(placeholderStr, n);
+        }
+        if(dirtyFlag_[7])
         {
             n = snprintf(placeholderStr,sizeof(placeholderStr),"$%d,",placeholder++);
             sql.append(placeholderStr, n);

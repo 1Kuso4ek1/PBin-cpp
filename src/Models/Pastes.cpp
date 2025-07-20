@@ -20,6 +20,7 @@ const std::string Pastes::Cols::_created = "\"created\"";
 const std::string Pastes::Cols::_expires = "\"expires\"";
 const std::string Pastes::Cols::_viewcount = "\"viewcount\"";
 const std::string Pastes::Cols::_ipaddress = "\"ipaddress\"";
+const std::string Pastes::Cols::_deletetoken = "\"deletetoken\"";
 const std::string Pastes::primaryKeyName = "id";
 const bool Pastes::hasPrimaryKey = true;
 const std::string Pastes::tableName = "\"pastes\"";
@@ -31,7 +32,8 @@ const std::vector<typename Pastes::MetaData> Pastes::metaData_={
 {"created","::trantor::Date","timestamp with time zone",0,0,0,1},
 {"expires","::trantor::Date","timestamp with time zone",0,0,0,0},
 {"viewcount","int32_t","integer",4,0,0,1},
-{"ipaddress","std::string","inet",0,0,0,0}
+{"ipaddress","std::string","inet",0,0,0,0},
+{"deletetoken","std::string","text",0,0,0,0}
 };
 const std::string &Pastes::getColumnName(size_t index) noexcept(false)
 {
@@ -106,11 +108,15 @@ Pastes::Pastes(const Row &r, const ssize_t indexOffset) noexcept
         {
             ipaddress_=std::make_shared<std::string>(r["ipaddress"].as<std::string>());
         }
+        if(!r["deletetoken"].isNull())
+        {
+            deletetoken_=std::make_shared<std::string>(r["deletetoken"].as<std::string>());
+        }
     }
     else
     {
         size_t offset = (size_t)indexOffset;
-        if(offset + 7 > r.size())
+        if(offset + 8 > r.size())
         {
             LOG_FATAL << "Invalid SQL result for this model";
             return;
@@ -187,13 +193,18 @@ Pastes::Pastes(const Row &r, const ssize_t indexOffset) noexcept
         {
             ipaddress_=std::make_shared<std::string>(r[index].as<std::string>());
         }
+        index = offset + 7;
+        if(!r[index].isNull())
+        {
+            deletetoken_=std::make_shared<std::string>(r[index].as<std::string>());
+        }
     }
 
 }
 
 Pastes::Pastes(const Json::Value &pJson, const std::vector<std::string> &pMasqueradingVector) noexcept(false)
 {
-    if(pMasqueradingVector.size() != 7)
+    if(pMasqueradingVector.size() != 8)
     {
         LOG_ERROR << "Bad masquerading vector";
         return;
@@ -288,6 +299,14 @@ Pastes::Pastes(const Json::Value &pJson, const std::vector<std::string> &pMasque
         if(!pJson[pMasqueradingVector[6]].isNull())
         {
             ipaddress_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
+        }
+    }
+    if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
+    {
+        dirtyFlag_[7] = true;
+        if(!pJson[pMasqueradingVector[7]].isNull())
+        {
+            deletetoken_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
         }
     }
 }
@@ -386,12 +405,20 @@ Pastes::Pastes(const Json::Value &pJson) noexcept(false)
             ipaddress_=std::make_shared<std::string>(pJson["ipaddress"].asString());
         }
     }
+    if(pJson.isMember("deletetoken"))
+    {
+        dirtyFlag_[7]=true;
+        if(!pJson["deletetoken"].isNull())
+        {
+            deletetoken_=std::make_shared<std::string>(pJson["deletetoken"].asString());
+        }
+    }
 }
 
 void Pastes::updateByMasqueradedJson(const Json::Value &pJson,
                                             const std::vector<std::string> &pMasqueradingVector) noexcept(false)
 {
-    if(pMasqueradingVector.size() != 7)
+    if(pMasqueradingVector.size() != 8)
     {
         LOG_ERROR << "Bad masquerading vector";
         return;
@@ -487,6 +514,14 @@ void Pastes::updateByMasqueradedJson(const Json::Value &pJson,
             ipaddress_=std::make_shared<std::string>(pJson[pMasqueradingVector[6]].asString());
         }
     }
+    if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
+    {
+        dirtyFlag_[7] = true;
+        if(!pJson[pMasqueradingVector[7]].isNull())
+        {
+            deletetoken_=std::make_shared<std::string>(pJson[pMasqueradingVector[7]].asString());
+        }
+    }
 }
 
 void Pastes::updateByJson(const Json::Value &pJson) noexcept(false)
@@ -580,6 +615,14 @@ void Pastes::updateByJson(const Json::Value &pJson) noexcept(false)
         if(!pJson["ipaddress"].isNull())
         {
             ipaddress_=std::make_shared<std::string>(pJson["ipaddress"].asString());
+        }
+    }
+    if(pJson.isMember("deletetoken"))
+    {
+        dirtyFlag_[7] = true;
+        if(!pJson["deletetoken"].isNull())
+        {
+            deletetoken_=std::make_shared<std::string>(pJson["deletetoken"].asString());
         }
     }
 }
@@ -743,6 +786,33 @@ void Pastes::setIpaddressToNull() noexcept
     dirtyFlag_[6] = true;
 }
 
+const std::string &Pastes::getValueOfDeletetoken() const noexcept
+{
+    static const std::string defaultValue = std::string();
+    if(deletetoken_)
+        return *deletetoken_;
+    return defaultValue;
+}
+const std::shared_ptr<std::string> &Pastes::getDeletetoken() const noexcept
+{
+    return deletetoken_;
+}
+void Pastes::setDeletetoken(const std::string &pDeletetoken) noexcept
+{
+    deletetoken_ = std::make_shared<std::string>(pDeletetoken);
+    dirtyFlag_[7] = true;
+}
+void Pastes::setDeletetoken(std::string &&pDeletetoken) noexcept
+{
+    deletetoken_ = std::make_shared<std::string>(std::move(pDeletetoken));
+    dirtyFlag_[7] = true;
+}
+void Pastes::setDeletetokenToNull() noexcept
+{
+    deletetoken_.reset();
+    dirtyFlag_[7] = true;
+}
+
 void Pastes::updateId(const uint64_t id)
 {
 }
@@ -756,7 +826,8 @@ const std::vector<std::string> &Pastes::insertColumns() noexcept
         "created",
         "expires",
         "viewcount",
-        "ipaddress"
+        "ipaddress",
+        "deletetoken"
     };
     return inCols;
 }
@@ -840,6 +911,17 @@ void Pastes::outputArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+    if(dirtyFlag_[7])
+    {
+        if(getDeletetoken())
+        {
+            binder << getValueOfDeletetoken();
+        }
+        else
+        {
+            binder << nullptr;
+        }
+    }
 }
 
 const std::vector<std::string> Pastes::updateColumns() const
@@ -872,6 +954,10 @@ const std::vector<std::string> Pastes::updateColumns() const
     if(dirtyFlag_[6])
     {
         ret.push_back(getColumnName(6));
+    }
+    if(dirtyFlag_[7])
+    {
+        ret.push_back(getColumnName(7));
     }
     return ret;
 }
@@ -955,6 +1041,17 @@ void Pastes::updateArgs(drogon::orm::internal::SqlBinder &binder) const
             binder << nullptr;
         }
     }
+    if(dirtyFlag_[7])
+    {
+        if(getDeletetoken())
+        {
+            binder << getValueOfDeletetoken();
+        }
+        else
+        {
+            binder << nullptr;
+        }
+    }
 }
 Json::Value Pastes::toJson() const
 {
@@ -1015,6 +1112,14 @@ Json::Value Pastes::toJson() const
     {
         ret["ipaddress"]=Json::Value();
     }
+    if(getDeletetoken())
+    {
+        ret["deletetoken"]=getValueOfDeletetoken();
+    }
+    else
+    {
+        ret["deletetoken"]=Json::Value();
+    }
     return ret;
 }
 
@@ -1022,7 +1127,7 @@ Json::Value Pastes::toMasqueradedJson(
     const std::vector<std::string> &pMasqueradingVector) const
 {
     Json::Value ret;
-    if(pMasqueradingVector.size() == 7)
+    if(pMasqueradingVector.size() == 8)
     {
         if(!pMasqueradingVector[0].empty())
         {
@@ -1101,6 +1206,17 @@ Json::Value Pastes::toMasqueradedJson(
                 ret[pMasqueradingVector[6]]=Json::Value();
             }
         }
+        if(!pMasqueradingVector[7].empty())
+        {
+            if(getDeletetoken())
+            {
+                ret[pMasqueradingVector[7]]=getValueOfDeletetoken();
+            }
+            else
+            {
+                ret[pMasqueradingVector[7]]=Json::Value();
+            }
+        }
         return ret;
     }
     LOG_ERROR << "Masquerade failed";
@@ -1160,6 +1276,14 @@ Json::Value Pastes::toMasqueradedJson(
     {
         ret["ipaddress"]=Json::Value();
     }
+    if(getDeletetoken())
+    {
+        ret["deletetoken"]=getValueOfDeletetoken();
+    }
+    else
+    {
+        ret["deletetoken"]=Json::Value();
+    }
     return ret;
 }
 
@@ -1210,13 +1334,18 @@ bool Pastes::validateJsonForCreation(const Json::Value &pJson, std::string &err)
         if(!validJsonOfField(6, "ipaddress", pJson["ipaddress"], err, true))
             return false;
     }
+    if(pJson.isMember("deletetoken"))
+    {
+        if(!validJsonOfField(7, "deletetoken", pJson["deletetoken"], err, true))
+            return false;
+    }
     return true;
 }
 bool Pastes::validateMasqueradedJsonForCreation(const Json::Value &pJson,
                                                 const std::vector<std::string> &pMasqueradingVector,
                                                 std::string &err)
 {
-    if(pMasqueradingVector.size() != 7)
+    if(pMasqueradingVector.size() != 8)
     {
         err = "Bad masquerading vector";
         return false;
@@ -1288,6 +1417,14 @@ bool Pastes::validateMasqueradedJsonForCreation(const Json::Value &pJson,
                   return false;
           }
       }
+      if(!pMasqueradingVector[7].empty())
+      {
+          if(pJson.isMember(pMasqueradingVector[7]))
+          {
+              if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, true))
+                  return false;
+          }
+      }
     }
     catch(const Json::LogicError &e)
     {
@@ -1338,13 +1475,18 @@ bool Pastes::validateJsonForUpdate(const Json::Value &pJson, std::string &err)
         if(!validJsonOfField(6, "ipaddress", pJson["ipaddress"], err, false))
             return false;
     }
+    if(pJson.isMember("deletetoken"))
+    {
+        if(!validJsonOfField(7, "deletetoken", pJson["deletetoken"], err, false))
+            return false;
+    }
     return true;
 }
 bool Pastes::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
                                               const std::vector<std::string> &pMasqueradingVector,
                                               std::string &err)
 {
-    if(pMasqueradingVector.size() != 7)
+    if(pMasqueradingVector.size() != 8)
     {
         err = "Bad masquerading vector";
         return false;
@@ -1388,6 +1530,11 @@ bool Pastes::validateMasqueradedJsonForUpdate(const Json::Value &pJson,
       if(!pMasqueradingVector[6].empty() && pJson.isMember(pMasqueradingVector[6]))
       {
           if(!validJsonOfField(6, pMasqueradingVector[6], pJson[pMasqueradingVector[6]], err, false))
+              return false;
+      }
+      if(!pMasqueradingVector[7].empty() && pJson.isMember(pMasqueradingVector[7]))
+      {
+          if(!validJsonOfField(7, pMasqueradingVector[7], pJson[pMasqueradingVector[7]], err, false))
               return false;
       }
     }
@@ -1477,6 +1624,17 @@ bool Pastes::validJsonOfField(size_t index,
             }
             break;
         case 6:
+            if(pJson.isNull())
+            {
+                return true;
+            }
+            if(!pJson.isString())
+            {
+                err="Type error in the "+fieldName+" field";
+                return false;
+            }
+            break;
+        case 7:
             if(pJson.isNull())
             {
                 return true;
