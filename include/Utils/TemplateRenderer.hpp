@@ -13,7 +13,7 @@ using trantor::Date;
 namespace Utils
 {
 
-inline constexpr auto pathToTemplate = "../static/templates/paste.html";
+inline constexpr auto pathToTemplate = "../static/html/paste.html";
 
 inline std::string escapeHtml(const std::string& str)
 {
@@ -47,7 +47,7 @@ inline std::string renderPasteHtml(const Json::Value& paste)
     auto lang = paste["language"].asString();
     auto text = escapeHtml(paste["text"].asString());
     auto created = Date::fromDbString(paste["created"].asString())
-                        .toCustomFormattedStringLocal("%d.%m.%Y %H:%M");
+                        .toCustomFormattedString("%d.%m.%Y %H:%M");
 
     int viewCount = paste["viewcount"].asInt();
 

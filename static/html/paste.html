@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Paste {0}</title>
+    <link rel="stylesheet" href="/css/prism.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Paste {0}</h1>
+
+        <pre><code class="language-{1}">{2}</code></pre>
+
+        <div class="info">
+            <p><strong>Language:</strong> {1}</p>
+            <p><strong>Views:</strong> {3}</p>
+            <p><strong>Created at:</strong> {4}</p>
+        </div>
+
+        <div class="delete-section">
+            <h3>Delete this paste:</h3>
+            <input type="text" id="delete-token" placeholder="Enter delete token">
+            <button id="delete-btn">Delete</button>
+        </div>
+    </div>
+
+    <script src="/js/prism.js"></script>
+    <script src="/js/paste.js"></script>
+</body>
+</html>
