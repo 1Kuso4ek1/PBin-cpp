@@ -14,14 +14,21 @@ set(
     BACKEND_HEADERS
 
     include/Controllers/StaticController.hpp
+    include/Controllers/PasteController.hpp
 
     include/Utils/Singleton.hpp
+    include/Utils/TemplateRenderer.hpp
+
+    include/Models/Pastes.hpp
 )
 
 set(
     BACKEND_SOURCES
 
     src/Controllers/StaticController.cpp
+    src/Controllers/PasteController.cpp
+
+    src/Models/Pastes.cpp
 
     src/main.cpp
 )

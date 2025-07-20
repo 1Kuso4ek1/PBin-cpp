@@ -17,6 +17,13 @@ void StaticController::swaggerFile(const HttpRequestPtr& req, Callback&& callbac
     callback(resp);
 }
 
+void StaticController::pasteCss(const HttpRequestPtr& req, Callback&& callback)
+{
+    const auto resp = HttpResponse::newFileResponse("../static/templates/paste.css");
+
+    callback(resp);
+}
+
 void StaticController::image(const HttpRequestPtr& req, Callback&& callback, const std::string& path)
 {
     const auto resp = HttpResponse::newFileResponse("../static/img/" + path);

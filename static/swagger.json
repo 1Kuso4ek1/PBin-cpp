@@ -144,7 +144,7 @@
           "text": {
             "type": "string"
           },
-          "ttl_seconds": {
+          "ttlSeconds": {
             "type": "integer",
             "example": 3600
           },
@@ -165,6 +165,10 @@
           "url": {
             "type": "string",
             "example": "https://domain.com/paste/abc123"
+          },
+          "deleteToken": {
+            "type": "string",
+            "example": "fae4f0d5dd8447f5aa7d0a6d3e3cb8b0"
           }
         }
       },
@@ -174,9 +178,9 @@
           "id": { "type": "string" },
           "text": { "type": "string" },
           "language": { "type": "string" },
-          "created_at": { "type": "string", "format": "date-time" },
-          "expires_at": { "type": "string", "format": "date-time", "nullable": true },
-          "view_count": { "type": "integer" }
+          "created": { "type": "string", "format": "date-time" },
+          "expires": { "type": "string", "format": "date-time", "nullable": true },
+          "viewCount": { "type": "integer" }
         }
       }
     }
