@@ -17,23 +17,23 @@ inline constexpr auto pathToTemplate = "../static/html/paste.html";
 
 inline std::string escapeHtml(const std::string& str)
 {
-    static const auto escape = [](const char c) -> std::string
+    std::string result;
+    result.reserve(str.size() * 2);
+
+    for(const auto i : str)
     {
-        switch(c)
+        switch(i)
         {
-        case '&': return "&amp;";
-        case '<': return "&lt;";
-        case '>': return "&gt;";
-        case '"': return "&quot;";
-        default: return { 1, c };
+        case '&': result += "&amp;"; break;
+        case '<': result += "&lt;"; break;
+        case '>': result += "&gt;"; break;
+        case '"': result += "&quot;"; break;
+        case '\'': result += "&#39;"; break;
+        default: result += i; break;
         }
-    };
+    }
 
-    std::ostringstream oss;
-    for(const auto i : str | std::views::transform(escape))
-        oss << i;
-
-    return oss.str();
+    return result;
 }
 
 inline std::string renderPasteHtml(const Json::Value& paste)
