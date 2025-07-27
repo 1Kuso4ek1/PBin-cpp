@@ -44,14 +44,13 @@ add_subdirectory(libraries/drogon)
 add_subdirectory(libraries/jwt-cpp)
 
 add_executable(
-    backend
+    PBin
 
     ${BACKEND_HEADERS}
     ${BACKEND_SOURCES}
 )
 
+target_link_libraries(PBin drogon jwt-cpp)
 
-target_link_libraries(backend drogon jwt-cpp)
-
-target_include_directories(backend PUBLIC ${CMAKE_SOURCE_DIR}/include/)
+target_include_directories(PBin PUBLIC ${CMAKE_SOURCE_DIR}/include/)
 
